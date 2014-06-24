@@ -2,6 +2,10 @@ require 'rails_helper'
 
 feature 'Login In' do
 
+  before do
+    User.create(username: 'ksolo', password: '123456', password_confirmation: '123456')
+  end
+
   context 'with valid credentials' do
     scenario 'signs me in' do
       # Given I'm on the login page
@@ -19,7 +23,18 @@ feature 'Login In' do
   end
 
   context "with invalid credentials" do
-    scenario "does not sign me in"
+    scenario "does not sign me in" do
+       # Given I'm on the login page
+      visit '/sessions/new'
+      # And I have filled in the form with valid credentials
+      within('#authenticate') do
+        fill_in 'Username', with: 'ksolo'
+        fill_in 'Password', with: '654321'
+      end
+      click_on 'Login'
+      # Then I should be on the login page
+      expect(page).to have_text("Invalid Credentials")
+    end
   end
 
 end
